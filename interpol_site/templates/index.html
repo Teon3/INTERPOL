@@ -1,0 +1,137 @@
+
+{% extends "base.html" %}
+
+{% block title %}База анкет — Red Notice{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <span class="eyebrow"><span class="live-dot"></span> PUBLIC NOTICES</span>
+        <h1>Міжнародна <span>база повідомлень</span></h1>
+        <p>Навчальна система пошуку та перегляду демонстраційних записів.</p>
+    </div>
+    <div class="hero-mark">R</div>
+</section>
+
+<section class="stats-row">
+    <div class="stat-card">
+        <span class="stat-label">УСЬОГО ЗАПИСІВ</span>
+        <strong>{{ total }}</strong>
+        <span class="stat-caption">У локальній базі</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">ПОТОЧНИЙ ПОШУК</span>
+        <strong>{{ people|length }}</strong>
+        <span class="stat-caption">Збігів за фільтрами</span>
+    </div>
+    <div class="stat-card stat-card-red">
+        <span class="stat-label">РЕЖИМ</span>
+        <strong>INTERPOL</strong>
+        <span class="stat-caption">Дані</span>
+    </div>
+</section>
+
+<section class="search-panel">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">DATABASE SEARCH</span>
+            <h2>Знайти анкету</h2>
+        </div>
+    </div>
+
+    <form method="GET" action="{{ url_for('index') }}" class="search-form">
+        <div class="search-field">
+            <label for="q">Пошуковий запит</label>
+            <input id="q" type="search" name="q" value="{{ q }}"
+                   placeholder="ПІБ, ID справи або громадянство">
+        </div>
+
+        <div class="filter-field">
+            <label for="type">Тип повідомлення</label>
+            <select id="type" name="type">
+                <option value="">Усі типи</option>
+                {% for item in notice_types %}
+                    <option value="{{ item }}"
+                        {% if selected_type == item %}selected{% endif %}>
+                        {{ item }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button class="btn btn-primary search-button" type="submit">
+            Шукати
+        </button>
+        {% if q or selected_type %}
+            <a class="btn btn-secondary" href="{{ url_for('index') }}">Скинути</a>
+        {% endif %}
+    </form>
+</section>
+
+<div class="results-heading">
+    <div>
+        <span class="eyebrow">RECORDS</span>
+        <h2>Анкети</h2>
+    </div>
+    <span class="results-count">{{ people|length }} записів</span>
+</div>
+
+<div class="people-grid">
+    {% for p in people %}
+        <article class="person-card">
+            <a class="person-photo" href="{{ url_for('person', pid=p.id) }}">
+                {% if p.photo %}
+                    <img src="{{ url_for('uploaded_file', filename=p.photo) }}"
+                         alt="Демонстраційне фото: {{ p.full_name }}"
+                         loading="lazy">
+                {% else %}
+                    <div class="photo-placeholder">
+                        <span>R</span>
+                        <small>ФОТО ВІДСУТНЄ</small>
+                    </div>
+                {% endif %}
+                <span class="photo-index">DEMO #{{ "%04d"|format(p.id) }}</span>
+            </a>
+
+            <div class="person-card-body">
+                <span class="notice-badge">{{ p.notice_type }}</span>
+                <h3>
+                    <a href="{{ url_for('person', pid=p.id) }}">{{ p.full_name }}</a>
+                </h3>
+                <p class="nationality">{{ p.nationality or "Не вказано" }}</p>
+
+                <div class="record-meta">
+                    <span>ID СПРАВИ</span>
+                    <strong>{{ p.record_id }}</strong>
+                </div>
+
+                <a class="card-link" href="{{ url_for('person', pid=p.id) }}">
+                    Переглянути анкету <span>↗</span>
+                </a>
+
+                {% if admin_logged_in %}
+                    <div class="card-admin-actions">
+                        <a class="btn btn-secondary btn-small"
+                           href="{{ url_for('edit', pid=p.id) }}">Редагувати</a>
+                        <form method="POST"
+                              action="{{ url_for('delete', pid=p.id) }}"
+                              onsubmit="return confirm('Видалити цю демонстраційну анкету?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-danger btn-small" type="submit">
+                                Видалити
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+        </article>
+    {% else %}
+        <div class="empty-state">
+            <span class="empty-icon">⌕</span>
+            <h3>Анкет не знайдено</h3>
+            <p>Змініть пошуковий запит або скиньте фільтри.</p>
+            <a class="btn btn-secondary" href="{{ url_for('index') }}">Показати всі</a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

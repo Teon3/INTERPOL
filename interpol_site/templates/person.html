@@ -1,0 +1,73 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ p.full_name }} — Red Notice{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <a class="back-link" href="{{ url_for('index') }}">← Назад до бази</a>
+    <span class="eyebrow">DEMONSTRATION RECORD #{{ p.id }}</span>
+    <h1>Профіль <span>особи</span></h1>
+</div>
+
+<section class="profile-panel">
+    <div class="profile-photo">
+        {% if p.photo %}
+            <img src="{{ url_for('uploaded_file', filename=p.photo) }}"
+                 alt="Демонстраційне фото: {{ p.full_name }}">
+        {% else %}
+            <div class="photo-placeholder profile-placeholder">
+                <span>R</span><small>ФОТО ВІДСУТНЄ</small>
+            </div>
+        {% endif %}
+        <div class="profile-photo-caption">DEMO RECORD OFFICIAL</div>
+    </div>
+
+    <div class="profile-content">
+        <span class="notice-badge">{{ p.notice_type }}</span>
+        <h1>{{ p.full_name }}</h1>
+        <p class="profile-subtitle">Демонстраційний запис бази даних</p>
+
+        <div class="profile-fields">
+            <div class="profile-field">
+                <span>ID СПРАВИ</span>
+                <strong>{{ p.record_id }}</strong>
+            </div>
+            <div class="profile-field">
+                <span>ГРОМАДЯНСТВО</span>
+                <strong>{{ p.nationality or "Не вказано" }}</strong>
+            </div>
+            <div class="profile-field">
+                <span>ДОДАТКОВИЙ НОМЕР</span>
+                <strong>{{ p.warrant_number or "Не вказано" }}</strong>
+            </div>
+            <div class="profile-field">
+                <span>СТВОРЕНО</span>
+                <strong>{{ p.created_at }}</strong>
+            </div>
+            <div class="profile-field">
+                <span>ОСТАННЄ ОНОВЛЕННЯ</span>
+                <strong>{{ p.updated_at }}</strong>
+            </div>
+        </div>
+
+        <div class="profile-description">
+            <h2>Опис запису</h2>
+            <p>{{ p.summary or "Опис не додано." }}</p>
+        </div>
+
+        {% if admin_logged_in %}
+            <div class="form-actions">
+                <a class="btn btn-primary" href="{{ url_for('edit', pid=p.id) }}">
+                    Редагувати
+                </a>
+                <form method="POST" action="{{ url_for('delete', pid=p.id) }}"
+                      onsubmit="return confirm('Видалити цю демонстраційну анкету?');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn btn-danger">Видалити</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

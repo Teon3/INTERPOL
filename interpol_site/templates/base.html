@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101b2b">
+    <title>{% block title %}INTERPOL{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="{{ url_for('index') }}">
+        <span class="brand-symbol" aria-hidden="true"><span>◎</span></span>
+        <span>
+            <strong>INTERNATIONAL CASEBOOK</strong>
+            <small>PUBLIC NOTICE DATABASE</small>
+        </span>
+    </a>
+
+    <nav class="nav">
+        <a href="{{ url_for('index') }}">База анкет</a>
+        {% if admin_logged_in %}
+            <a href="{{ url_for('apply') }}" class="nav-add">+ Створити анкету</a>
+            <form action="{{ url_for('logout') }}" method="POST" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="nav-logout" type="submit">Вийти</button>
+            </form>
+        {% endif %}
+    </nav>
+</header>
+
+<main class="main-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-list">
+                {% for category, message in messages %}
+                    <div class="flash flash-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>

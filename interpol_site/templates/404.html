@@ -1,0 +1,13 @@
+
+{% extends "base.html" %}
+
+{% block title %}Запис не знайдено{% endblock %}
+
+{% block content %}
+<section class="empty-state not-found">
+    <span class="empty-icon">404</span>
+    <h1>Запис не знайдено</h1>
+    <p>Можливо, анкету видалено або адреса неправильна.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">Повернутися до бази</a>
+</section>
+{% endblock %}
