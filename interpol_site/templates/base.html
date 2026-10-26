@@ -1,30 +1,40 @@
-
 <!DOCTYPE html>
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#101b2b">
-    <title>{% block title %}INTERPOL{% endblock %}</title>
+    <meta name="theme-color" content="#00152e">
+    <title>{% block title %}INTERPOL DATABASE{% endblock %}</title>
+    <!-- Підключення шрифтів -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+
+<!-- Банер рівня доступу -->
+<div class="system-banner">
+    <span class="banner-text">⚠️ RESTRICTED ACCESS SYSTEM — FOR OFFICIAL LAW ENFORCEMENT USE ONLY</span>
+    <span class="system-time" id="terminal-clock"></span>
+</div>
+
 <header class="topbar">
     <a class="brand" href="{{ url_for('index') }}">
-        <span class="brand-symbol" aria-hidden="true"><span>◎</span></span>
+        <span class="brand-symbol" aria-hidden="true">🌐</span>
         <span>
             <strong>INTERNATIONAL CASEBOOK</strong>
-            <small>PUBLIC NOTICE DATABASE</small>
+            <small>GLOBAL POLICE COMMUNICATIONS SYSTEM</small>
         </span>
     </a>
 
     <nav class="nav">
         <a href="{{ url_for('index') }}">База анкет</a>
         {% if admin_logged_in %}
-            <a href="{{ url_for('apply') }}" class="nav-add">+ Створити анкету</a>
+            <a href="{{ url_for('apply') }}" class="nav-add">+ Новий запис</a>
             <form action="{{ url_for('logout') }}" method="POST" class="inline-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button class="nav-logout" type="submit">Вийти</button>
+                <button class="nav-logout" type="submit">Вийти [X]</button>
             </form>
         {% endif %}
     </nav>
@@ -43,6 +53,25 @@
 
     {% block content %}{% endblock %}
 </main>
+
+<!-- Системний підвал -->
+<footer class="system-footer">
+    <div class="footer-content">
+        <p><strong>INTERPOL General Secretariat © 2026.</strong> Unauthorized access is strictly prohibited and monitored.</p>
+        <p class="mono-text">TERMINAL ID: T-894-LWO | SECURE CONNECTION | IP: ENCRYPTED</p>
+    </div>
+</footer>
+
+<!-- Скрипт для термінального годинника -->
+<script>
+    function updateClock() {
+        const now = new Date();
+        const timeString = now.toISOString().replace('T', ' ').substring(0, 19) + ' UTC';
+        document.getElementById('terminal-clock').textContent = timeString;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>
 
 </body>
 </html>

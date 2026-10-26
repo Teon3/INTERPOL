@@ -1,17 +1,14 @@
-
 {% extends "base.html" %}
 
-{% block title %}Редагувати анкету — Red Notice{% endblock %}
+{% block title %}Редагувати досьє — INTERPOL{% endblock %}
 
 {% block content %}
 {% set f = form_data if form_data else {} %}
 
 <div class="page-heading">
-    <a class="back-link" href="{{ url_for('person', pid=p.id) }}">
-        ← Назад до анкети
-    </a>
+    <a class="back-link" href="{{ url_for('person', pid=p.id) }}">← Назад до анкети</a>
     <span class="eyebrow">EDIT RECORD #{{ p.id }}</span>
-    <h1>Редагування <span>анкети</span></h1>
+    <h1>Редагування <span>досьє</span></h1>
 </div>
 
 <form class="form-panel" method="POST" enctype="multipart/form-data">
@@ -20,108 +17,84 @@
     <div class="form-grid">
         <div class="field">
             <label for="record_id">ID справи *</label>
-            <input
-                id="record_id"
-                name="record_id"
-                required
-                maxlength="50"
-                value="{{ f.get('record_id', p['record_id']) }}"
-            >
+            <input id="record_id" name="record_id" required value="{{ f.get('record_id', p['record_id']) }}">
         </div>
-
         <div class="field">
             <label for="notice_type">Тип повідомлення *</label>
             <select id="notice_type" name="notice_type" required>
                 {% for item in notice_types %}
-                    <option
-                        value="{{ item }}"
-                        {% if f.get('notice_type', p['notice_type']) == item %}
-                            selected
-                        {% endif %}
-                    >
-                        {{ item }}
-                    </option>
+                    <option value="{{ item }}" {% if f.get('notice_type', p['notice_type']) == item %}selected{% endif %}>{{ item }}</option>
                 {% endfor %}
             </select>
         </div>
-
         <div class="field field-full">
             <label for="full_name">Повне ім'я *</label>
-            <input
-                id="full_name"
-                name="full_name"
-                required
-                maxlength="150"
-                value="{{ f.get('full_name', p['full_name']) }}"
-            >
+            <input id="full_name" name="full_name" required value="{{ f.get('full_name', p['full_name']) }}">
         </div>
 
+        <div class="form-section-title field-full" style="margin-top: 1rem;">
+            <div><h2>Ідентифікаційні дані</h2></div>
+        </div>
+
+        <div class="field">
+            <label for="date_of_birth">Дата народження</label>
+            <input id="date_of_birth" name="date_of_birth" value="{{ f.get('date_of_birth', p['date_of_birth']) }}">
+        </div>
+        <div class="field">
+            <label for="place_of_birth">Місце народження</label>
+            <input id="place_of_birth" name="place_of_birth" value="{{ f.get('place_of_birth', p['place_of_birth']) }}">
+        </div>
         <div class="field">
             <label for="nationality">Громадянство</label>
-            <input
-                id="nationality"
-                name="nationality"
-                value="{{ f.get('nationality', p['nationality']) }}"
-            >
+            <input id="nationality" name="nationality" value="{{ f.get('nationality', p['nationality']) }}">
+        </div>
+        <div class="field">
+            <label for="languages">Мови спілкування</label>
+            <input id="languages" name="languages" value="{{ f.get('languages', p['languages']) }}">
+        </div>
+
+        <div class="form-section-title field-full" style="margin-top: 1rem;">
+            <div><h2>Опис та звинувачення</h2></div>
         </div>
 
         <div class="field">
-            <label for="warrant_number">Додатковий номер</label>
-            <input
-                id="warrant_number"
-                name="warrant_number"
-                value="{{ f.get('warrant_number', p['warrant_number']) }}"
-            >
+            <label for="height">Зріст</label>
+            <input id="height" name="height" value="{{ f.get('height', p['height']) }}">
         </div>
-
+        <div class="field">
+            <label for="eye_color">Колір очей</label>
+            <input id="eye_color" name="eye_color" value="{{ f.get('eye_color', p['eye_color']) }}">
+        </div>
         <div class="field field-full">
-            <label for="summary">Опис</label>
-            <textarea
-                id="summary"
-                name="summary"
-                rows="5"
-            >{{ f.get('summary', p['summary']) }}</textarea>
+            <label for="charges">Пред'явлені звинувачення (Charges)</label>
+            <textarea id="charges" name="charges" rows="3">{{ f.get('charges', p['charges']) }}</textarea>
         </div>
-    </div>
+        <div class="field field-full">
+            <label for="summary">Додаткова інформація</label>
+            <textarea id="summary" name="summary" rows="3">{{ f.get('summary', p['summary']) }}</textarea>
+        </div>
+        <div class="field">
+            <label for="warrant_number">Номер ордера</label>
+            <input id="warrant_number" name="warrant_number" value="{{ f.get('warrant_number', p['warrant_number']) }}">
+        </div>
 
-    <div class="upload-box">
-        <h2>Поточна фотографія</h2>
+        <div class="form-section-title field-full" style="margin-top: 1rem;">
+            <div><h2>Біометричні дані (Фото)</h2></div>
+        </div>
 
-        {% if p['photo'] %}
-            <img
-                class="edit-thumbnail"
-                src="{{ url_for('uploaded_file', filename=p['photo']) }}"
-                alt="Поточне демонстраційне фото"
-            >
-        {% else %}
-            <p>Фотографію ще не завантажено.</p>
-        {% endif %}
-
-        <label for="photo">Вибрати нову фотографію</label>
-        <input
-            id="photo"
-            type="file"
-            name="photo"
-            accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-        >
-
-        <p>
-            Якщо не вибрати нове фото, поточне залишиться.
-            Максимальний розмір — 8 МБ.
-        </p>
+        <div class="upload-box field-full">
+            {% if p['photo'] %}
+                <img class="edit-thumbnail" src="{{ url_for('uploaded_file', filename=p['photo']) }}" alt="Поточне фото" style="max-width: 150px; display: block; margin: 0 auto 1rem;">
+            {% endif %}
+            <label for="photo">Вибрати нову фотографію</label>
+            <input id="photo" type="file" name="photo" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+            <p>Якщо не вибрати нове фото, поточне залишиться.</p>
+        </div>
     </div>
 
     <div class="form-actions">
-        <a
-            class="btn btn-secondary"
-            href="{{ url_for('person', pid=p.id) }}"
-        >
-            Скасувати
-        </a>
-
-        <button class="btn btn-primary" type="submit">
-            Зберегти зміни →
-        </button>
+        <a class="btn btn-secondary" href="{{ url_for('person', pid=p.id) }}">Скасувати</a>
+        <button class="btn btn-primary" type="submit">Зберегти зміни →</button>
     </div>
 </form>
 {% endblock %}

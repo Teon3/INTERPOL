@@ -1,35 +1,36 @@
-
 {% extends "base.html" %}
 
-{% block title %}Вхід адміністратора — Red Notice{% endblock %}
+{% block title %}Системний вхід — INTERPOL{% endblock %}
 
 {% block content %}
 <section class="login-wrap">
     <div class="login-card">
-        <div class="login-symbol">R</div>
-        <span class="eyebrow">RESTRICTED ACCESS · DEMO</span>
-        <h1>Вхід адміністратора</h1>
-        <p>Авторизуйтеся для керування демонстраційними анкетами.</p>
+        <div class="login-symbol">🛡️</div>
+        <span class="eyebrow">RESTRICTED TERMINAL LOGIN</span>
+        <h1>Авторизація</h1>
+        <p>Введіть облікові дані співробітника для доступу.</p>
 
         <form method="POST" class="login-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <div class="field">
-                <label for="username">Логін</label>
-                <input id="username" name="username" required
-                       autocomplete="username">
+                <label for="username">Ідентифікатор агента (Логін)</label>
+                <input id="username" name="username" required autocomplete="username" placeholder="Введіть логін">
             </div>
 
             <div class="field">
-                <label for="password">Пароль</label>
-                <input id="password" type="password" name="password" required
-                       autocomplete="current-password">
+                <label for="password">Код доступу (Пароль)</label>
+                <input id="password" type="password" name="password" required autocomplete="current-password" placeholder="••••••••">
             </div>
 
             <button class="btn btn-primary btn-block" type="submit">
-                Увійти до системи →
+                Ініціювати захищене з'єднання →
             </button>
         </form>
+
+        <div class="legal-warning">
+            <strong>WARNING:</strong> You are accessing a U.S. Government / INTERPOL Information System. System usage may be monitored, recorded, and subject to audit.
+        </div>
     </div>
 </section>
 {% endblock %}

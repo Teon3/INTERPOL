@@ -1,32 +1,56 @@
-
 {% extends "base.html" %}
 
-{% block title %}{{ p.full_name }} — Red Notice{% endblock %}
+{% block title %}{{ p.full_name }} — INTERPOL{% endblock %}
 
 {% block content %}
 <div class="page-heading">
     <a class="back-link" href="{{ url_for('index') }}">← Назад до бази</a>
-    <span class="eyebrow">DEMONSTRATION RECORD #{{ p.id }}</span>
-    <h1>Профіль <span>особи</span></h1>
+    <span class="eyebrow">FILE REF: {{ p.record_id }} // CLASSIFIED</span>
+    <h1>Досьє <span>особи</span></h1>
 </div>
 
 <section class="profile-panel">
-    <div class="profile-photo">
-        {% if p.photo %}
-            <img src="{{ url_for('uploaded_file', filename=p.photo) }}"
-                 alt="Демонстраційне фото: {{ p.full_name }}">
-        {% else %}
-            <div class="photo-placeholder profile-placeholder">
-                <span>R</span><small>ФОТО ВІДСУТНЄ</small>
+    <div class="profile-sidebar">
+        <div class="profile-photo">
+            {% if p.photo %}
+                <img src="{{ url_for('uploaded_file', filename=p.photo) }}"
+                     alt="Фото: {{ p.full_name }}">
+            {% else %}
+                <div class="photo-placeholder profile-placeholder">
+                    <span>?</span><small>IMAGE UNAVAILABLE</small>
+                </div>
+            {% endif %}
+            <div class="profile-photo-caption">
+                <span class="barcode">||| ||||| || | ||||</span>
+                <span>ID: {{ p.record_id }}</span>
             </div>
-        {% endif %}
-        <div class="profile-photo-caption">DEMO RECORD OFFICIAL</div>
+        </div>
+        
+        <!-- Додатковий блок статусів -->
+        <div class="biometrics-panel">
+            <div class="bio-row">
+                <span>ВІДБИТКИ ПАЛЬЦІВ</span>
+                <strong class="status-yes">● В НАЯВНОСТІ</strong>
+            </div>
+            <div class="bio-row">
+                <span>ДНК-ПРОФІЛЬ</span>
+                <strong class="status-no">○ ВІДСУТНІЙ</strong>
+            </div>
+            <div class="bio-row">
+                <span>РІВЕНЬ ЗАГРОЗИ</span>
+                <strong class="status-danger">ВИСОКИЙ</strong>
+            </div>
+        </div>
     </div>
 
     <div class="profile-content">
-        <span class="notice-badge">{{ p.notice_type }}</span>
+        <div class="badge-row">
+            <span class="notice-badge badge-{{ p.notice_type|lower|replace(' ', '-') }}">{{ p.notice_type }}</span>
+            <span class="confidential-stamp">CONFIDENTIAL</span>
+        </div>
+        
         <h1>{{ p.full_name }}</h1>
-        <p class="profile-subtitle">Демонстраційний запис бази даних</p>
+        <p class="profile-subtitle">Офіційний екстракт із бази даних Інтерполу</p>
 
         <div class="profile-fields">
             <div class="profile-field">
@@ -35,14 +59,14 @@
             </div>
             <div class="profile-field">
                 <span>ГРОМАДЯНСТВО</span>
-                <strong>{{ p.nationality or "Не вказано" }}</strong>
+                <strong>{{ p.nationality or "Не встановлено" }}</strong>
             </div>
             <div class="profile-field">
-                <span>ДОДАТКОВИЙ НОМЕР</span>
-                <strong>{{ p.warrant_number or "Не вказано" }}</strong>
+                <span>ДОДАТКОВИЙ ОРДЕР</span>
+                <strong>{{ p.warrant_number or "N/A" }}</strong>
             </div>
             <div class="profile-field">
-                <span>СТВОРЕНО</span>
+                <span>ДАТА РЕЄСТРАЦІЇ</span>
                 <strong>{{ p.created_at }}</strong>
             </div>
             <div class="profile-field">
@@ -52,19 +76,17 @@
         </div>
 
         <div class="profile-description">
-            <h2>Опис запису</h2>
-            <p>{{ p.summary or "Опис не додано." }}</p>
+            <h2>Опис справи / Summary</h2>
+            <p>{{ p.summary or "Дані відсутні у відкритому доступі. Зверніться до національного бюро." }}</p>
         </div>
 
         {% if admin_logged_in %}
-            <div class="form-actions">
-                <a class="btn btn-primary" href="{{ url_for('edit', pid=p.id) }}">
-                    Редагувати
-                </a>
+            <div class="form-actions admin-actions">
+                <a class="btn btn-primary" href="{{ url_for('edit', pid=p.id) }}">Редагувати досьє</a>
                 <form method="POST" action="{{ url_for('delete', pid=p.id) }}"
-                      onsubmit="return confirm('Видалити цю демонстраційну анкету?');">
+                      onsubmit="return confirm('УВАГА: Видалення досьє з системи є незворотнім. Продовжити?');">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" class="btn btn-danger">Видалити</button>
+                    <button type="submit" class="btn btn-danger">Вилучити з бази</button>
                 </form>
             </div>
         {% endif %}

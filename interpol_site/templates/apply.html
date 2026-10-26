@@ -1,82 +1,85 @@
-
 {% extends "base.html" %}
 
-{% block title %}Створити анкету — INTERPOL{% endblock %}
+{% block title %}Нове досьє — INTERPOL{% endblock %}
 
 {% block content %}
 <div class="page-heading">
     <a class="back-link" href="{{ url_for('index') }}">← Назад до бази</a>
-    <span class="eyebrow">NEW RECORD</span>
-    <h1>Створення <span>анкети</span></h1>
-    <p>Заповніть інформацію для нового демонстраційного запису.</p>
+    <span class="eyebrow">NEW RECORD ENTRY</span>
+    <h1>Створення <span>досьє</span></h1>
 </div>
 
 <form class="form-panel" method="POST" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-    <div class="form-section-title">
-        <span>01</span>
-        <div><h2>Основна інформація</h2><p>Обов'язкові поля позначено *</p></div>
-    </div>
-
     <div class="form-grid">
         <div class="field">
             <label for="record_id">ID справи *</label>
-            <input id="record_id" name="record_id" required maxlength="50"
-                   value="{{ form_data.get('record_id', '') }}"
-                   placeholder="DEMO-2026-001">
+            <input id="record_id" name="record_id" required value="{{ form_data.get('record_id', '') }}">
         </div>
         <div class="field">
             <label for="notice_type">Тип повідомлення *</label>
             <select id="notice_type" name="notice_type" required>
                 {% for item in notice_types %}
-                    <option value="{{ item }}"
-                        {% if form_data.get('notice_type', 'Red Notice') == item %}selected{% endif %}>
-                        {{ item }}
-                    </option>
+                    <option value="{{ item }}" {% if form_data.get('notice_type', 'Red Notice') == item %}selected{% endif %}>{{ item }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="field field-full">
             <label for="full_name">Повне ім'я *</label>
-            <input id="full_name" name="full_name" required maxlength="150"
-                   value="{{ form_data.get('full_name', '') }}"
-                   placeholder="Наприклад: Тестова Особа">
+            <input id="full_name" name="full_name" required value="{{ form_data.get('full_name', '') }}">
+        </div>
+        
+        <div class="form-section-title field-full" style="margin-top: 1rem;">
+            <div><h2>Ідентифікаційні дані</h2></div>
+        </div>
+
+        <div class="field">
+            <label for="date_of_birth">Дата народження</label>
+            <input id="date_of_birth" name="date_of_birth" placeholder="РРРР або РРРР-ММ-ДД" value="{{ form_data.get('date_of_birth', '') }}">
+        </div>
+        <div class="field">
+            <label for="place_of_birth">Місце народження</label>
+            <input id="place_of_birth" name="place_of_birth" placeholder="Місто, Країна" value="{{ form_data.get('place_of_birth', '') }}">
         </div>
         <div class="field">
             <label for="nationality">Громадянство</label>
-            <input id="nationality" name="nationality"
-                   value="{{ form_data.get('nationality', '') }}"
-                   placeholder="Наприклад: Україна">
+            <input id="nationality" name="nationality" value="{{ form_data.get('nationality', '') }}">
         </div>
         <div class="field">
-            <label for="warrant_number">Додатковий номер</label>
-            <input id="warrant_number" name="warrant_number"
-                   value="{{ form_data.get('warrant_number', '') }}"
-                   placeholder="DEMO-W-001">
+            <label for="languages">Мови спілкування</label>
+            <input id="languages" name="languages" placeholder="Англійська, Українська тощо" value="{{ form_data.get('languages', '') }}">
+        </div>
+        
+        <div class="form-section-title field-full" style="margin-top: 1rem;">
+            <div><h2>Опис та звинувачення</h2></div>
+        </div>
+
+        <div class="field">
+            <label for="height">Зріст</label>
+            <input id="height" name="height" placeholder="Напр. 1.85 м" value="{{ form_data.get('height', '') }}">
+        </div>
+        <div class="field">
+            <label for="eye_color">Колір очей</label>
+            <input id="eye_color" name="eye_color" value="{{ form_data.get('eye_color', '') }}">
         </div>
         <div class="field field-full">
-            <label for="summary">Опис</label>
-            <textarea id="summary" name="summary" rows="5"
-                      placeholder="Введіть демонстраційний опис...">{{ form_data.get('summary', '') }}</textarea>
+            <label for="charges">Пред'явлені звинувачення (Charges)</label>
+            <textarea id="charges" name="charges" rows="3" placeholder="Опис кримінальних звинувачень...">{{ form_data.get('charges', '') }}</textarea>
         </div>
-    </div>
+        <div class="field field-full">
+            <label for="summary">Додаткова інформація</label>
+            <textarea id="summary" name="summary" rows="3">{{ form_data.get('summary', '') }}</textarea>
+        </div>
+        <div class="field">
+            <label for="warrant_number">Номер ордера</label>
+            <input id="warrant_number" name="warrant_number" value="{{ form_data.get('warrant_number', '') }}">
+        </div>
 
-    <div class="form-section-title">
-        <span>02</span>
-        <div><h2>Фотографія</h2><p>JPG, PNG або WEBP · до 8 МБ</p></div>
-    </div>
+        <div class="form-section-title field-full" style="margin-top: 1rem;">
+            <div><h2>Біометричні дані (Фото)</h2></div>
+        </div>
 
-    <div class="upload-box">
-        <label for="photo">Виберіть зображення</label>
-        <input id="photo" type="file" name="photo"
-               accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
-        <p>Використовуйте лише зображення, які маєте право публікувати.</p>
-    </div>
-
-    <div class="form-actions">
-        <a class="btn btn-secondary" href="{{ url_for('index') }}">Скасувати</a>
-        <button class="btn btn-primary" type="submit">Створити анкету →</button>
-    </div>
-</form>
-{% endblock %}
+        <div class="upload-box field-full">
+            <label for="photo">Виберіть зображення</label>
+            <input id="photo" type="file" name="
